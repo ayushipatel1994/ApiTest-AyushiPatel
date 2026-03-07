@@ -17,7 +17,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"username\": \"kminchelle\",\n  \"password\": \"0lelplR\"\n}"
+          "raw": ""
         },
         "url": {
           "raw": "https://dummyjson.com/users",
