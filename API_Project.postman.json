@@ -12,11 +12,9 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "https://dummyjson.com/users",
-          "protocol": "https",
+          "raw": "{{baseUrl}}/users",
           "host": [
-            "dummyjson",
-            "com"
+            "{{baseUrl}}"
           ],
           "path": [
             "users"
@@ -34,7 +32,7 @@
             "exec": [
               "const response = pm.response.json();",
               "",
-              "pm.globals.set(\"accessToken\", response.accessToken);"
+              "pm.collectionVariables.set(\"accessToken\", response.accessToken);"
             ],
             "type": "text/javascript",
             "packages": {},
@@ -55,11 +53,9 @@
           }
         },
         "url": {
-          "raw": "https://dummyjson.com/auth/login",
-          "protocol": "https",
+          "raw": "{{baseUrl}}/auth/login",
           "host": [
-            "dummyjson",
-            "com"
+            "{{baseUrl}}"
           ],
           "path": [
             "auth",
@@ -76,7 +72,7 @@
           "listen": "test",
           "script": {
             "exec": [
-              "pm.test(\"Status code is 200\", function () {",
+              "pm.test(\"Status code is 201\", function () {",
               "    pm.response.to.have.status(201);",
               "});",
               "",
@@ -87,13 +83,52 @@
               "",
               "pm.test(\"Product quantity is correct\", function () {",
               "    var jsonData = pm.response.json();",
-              "    pm.expect(jsonData.products[0].quantity).to.eql(1);",
+              "    pm.expect(jsonData.products[0].quantity).to.eql(5);",
               "});",
               "",
               "pm.test(\"Response contains products array\", function () {",
               "    var jsonData = pm.response.json();",
               "    pm.expect(jsonData.products).to.be.an(\"array\");",
-              "});"
+              "});",
+              "",
+              "const schema = {",
+              "  type: 'object',",
+              "  required: ['id', 'products'],",
+              "  properties: {",
+              "    id: { type: ['integer','number'] },",
+              "    products: {",
+              "      type: 'array',",
+              "      items: {",
+              "        type: 'object',",
+              "        required: ['id', 'quantity'],",
+              "        properties: {",
+              "          id: { type: ['integer','number'] },",
+              "          quantity: { type: ['integer','number'], minimum: 1 }",
+              "        }",
+              "      }",
+              "    }",
+              "  }",
+              "};",
+              "",
+              "// Store once (e.g., in a pre-request or setup request)",
+              "pm.collectionVariables.set('cartSchema', JSON.stringify(schema));",
+              "",
+              "// In the cart-add Tests tab:",
+              "pm.test('Response matches schema', function () {",
+              "  pm.response.to.have.jsonSchema(JSON.parse(pm.collectionVariables.get('cartSchema')));",
+              "});",
+              "``"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
             ],
             "type": "text/javascript",
             "packages": {},
@@ -128,7 +163,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n\"userId\": 1,\n\"products\": [\n{\n\"id\": 144,\n\"quantity\": 1\n}\n]\n}",
+          "raw": "{\n\"userId\": 1,\n\"products\": [\n{\n\"id\": 83,\n\"quantity\": 5\n}\n]\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -136,11 +171,9 @@
           }
         },
         "url": {
-          "raw": "https://dummyjson.com/carts/add",
-          "protocol": "https",
+          "raw": "{{baseUrl}}/carts/add",
           "host": [
-            "dummyjson",
-            "com"
+            "{{baseUrl}}"
           ],
           "path": [
             "carts",
@@ -174,6 +207,16 @@
         }
       ],
       "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{accessToken}}",
+              "type": "string"
+            }
+          ]
+        },
         "method": "POST",
         "header": [
           {
@@ -184,12 +227,13 @@
           {
             "key": "Authorization",
             "value": "Bearer sample-token",
-            "type": "text"
+            "type": "text",
+            "disabled": true
           }
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"userId\": 1,\n  \"products\": [\n    {\n      \"id\": 144,\n      \"quantity\": -3\n    }\n  ]\n}",
+          "raw": "{\n  \"userId\": 1,\n  \"products\": [\n    {\n      \"id\": 83,\n      \"quantity\": -3\n    }\n  ]\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -197,11 +241,9 @@
           }
         },
         "url": {
-          "raw": "https://dummyjson.com/carts/add",
-          "protocol": "https",
+          "raw": "{{baseUrl}}/carts/add",
           "host": [
-            "dummyjson",
-            "com"
+            "{{baseUrl}}"
           ],
           "path": [
             "carts",
@@ -240,6 +282,15 @@
     {
       "key": "accessToken",
       "value": ""
+    },
+    {
+      "key": "cartSchema",
+      "value": ""
+    },
+    {
+      "key": "baseUrl",
+      "value": "",
+      "type": "default"
     }
   ]
 }
