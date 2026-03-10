@@ -110,14 +110,11 @@
               "  }",
               "};",
               "",
-              "// Store once (e.g., in a pre-request or setup request)",
               "pm.collectionVariables.set('cartSchema', JSON.stringify(schema));",
               "",
-              "// In the cart-add Tests tab:",
               "pm.test('Response matches schema', function () {",
               "  pm.response.to.have.jsonSchema(JSON.parse(pm.collectionVariables.get('cartSchema')));",
-              "});",
-              "``"
+              "});"
             ],
             "type": "text/javascript",
             "packages": {},
